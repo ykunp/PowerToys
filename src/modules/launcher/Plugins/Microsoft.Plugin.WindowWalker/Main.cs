@@ -49,6 +49,7 @@ namespace Microsoft.Plugin.WindowWalker
                     x.Result.SwitchToWindow();
                     return true;
                 },
+                Score = x.Score + 10000,
             }).ToList();
         }
 
