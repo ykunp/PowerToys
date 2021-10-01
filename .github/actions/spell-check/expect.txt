@@ -12,10 +12,10 @@ Acceleratorkeys
 ACCEPTFILES
 accessibile
 accessibilityinsights
+Accessible
 Acl
 aclapi
 AColumn
-Accessible
 acos
 acrt
 Actioncenter
@@ -126,8 +126,8 @@ AUTOMATIONPROPERTIES
 Autorun
 AUTOSIZECOLUMNS
 AUTOUPDATE
-AValid
 available
+AValid
 awakeversion
 AWAYMODE
 AYUV
@@ -230,10 +230,13 @@ CHILDACTIVATE
 CHILDWINDOW
 chrdavis
 chrisharris
+chromaticities
 chrono
 Chrzan
 chrzan
 CHT
+cielab
+CIEXYZ
 CImage
 cinttypes
 cla
@@ -289,6 +292,7 @@ comhost
 cominterop
 commandline
 commctrl
+companding
 Compat
 COMPOSITIONFULL
 comsupp
@@ -403,6 +407,7 @@ ddd
 ddee
 ddf
 Deact
+debian
 DECLAR
 declspec
 decltype
@@ -424,6 +429,7 @@ Delimarsky
 delims
 dend
 DENORMAL
+Deondre
 depersist
 deprioritized
 deps
@@ -564,6 +570,7 @@ errc
 errorlevel
 ERRORMESSAGE
 ERRORTITLE
+ESettings
 esize
 estdir
 etcore
@@ -989,6 +996,7 @@ IRepository
 IResult
 ISavable
 isbi
+iss
 ISearch
 IService
 isetting
@@ -1265,6 +1273,7 @@ mii
 MIIM
 millis
 mimetype
+mindaro
 Minimizeallwindows
 MINIMIZEBOX
 miniz
@@ -1321,6 +1330,7 @@ msiquery
 MSIRESTARTMANAGERCONTROL
 msix
 msixbundle
+MSIXCA
 MSIXVERSION
 MSLLHOOKSTRUCT
 Mso
@@ -1695,6 +1705,7 @@ RBUTTONUP
 rclsid
 RCONTROL
 RCtrl
+rdeveen
 RDW
 readme
 READMODE
@@ -1957,6 +1968,7 @@ SRCCOPY
 sre
 sregex
 SResize
+SRGB
 srme
 srre
 srw
