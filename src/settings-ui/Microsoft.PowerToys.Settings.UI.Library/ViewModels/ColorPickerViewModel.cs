@@ -45,7 +45,7 @@ namespace Microsoft.PowerToys.Settings.UI.Library.ViewModels
             SelectableColorRepresentations = new Dictionary<ColorRepresentationType, string>
             {
                 { ColorRepresentationType.CMYK, "CMYK - cmyk(100%, 50%, 75%, 0%)" },
-                { ColorRepresentationType.HEX,  "HEX - #FFAA00" },
+                { ColorRepresentationType.HEX,  "HEX - ffaa00" },
                 { ColorRepresentationType.HSB,  "HSB - hsb(100, 50%, 75%)" },
                 { ColorRepresentationType.HSI,  "HSI - hsi(100, 50%, 75%)" },
                 { ColorRepresentationType.HSL,  "HSL - hsl(100, 50%, 75%)" },
@@ -148,43 +148,19 @@ namespace Microsoft.PowerToys.Settings.UI.Library.ViewModels
             }
         }
 
-        public bool ActivationOpensEditor
+        public int ActivationBehavior
         {
-            get => _colorPickerSettings.Properties.ActivationAction == ColorPickerActivationAction.OpenEditor;
-            set
+            get
             {
-                if (value && _colorPickerSettings.Properties.ActivationAction != ColorPickerActivationAction.OpenEditor)
-                {
-                    _colorPickerSettings.Properties.ActivationAction = ColorPickerActivationAction.OpenEditor;
-                    OnPropertyChanged(nameof(ActivationOpensEditor));
-                    NotifySettingsChanged();
-                }
+                return (int)_colorPickerSettings.Properties.ActivationAction;
             }
-        }
 
-        public bool ActivationOpensColorPickerOnly
-        {
-            get => _colorPickerSettings.Properties.ActivationAction == ColorPickerActivationAction.OpenOnlyColorPicker;
             set
             {
-                if (value && _colorPickerSettings.Properties.ActivationAction != ColorPickerActivationAction.OpenOnlyColorPicker)
+                if (value != (int)_colorPickerSettings.Properties.ActivationAction)
                 {
-                    _colorPickerSettings.Properties.ActivationAction = ColorPickerActivationAction.OpenOnlyColorPicker;
-                    OnPropertyChanged(nameof(ActivationOpensColorPickerOnly));
-                    NotifySettingsChanged();
-                }
-            }
-        }
-
-        public bool ActivationOpensColorPickerAndEditor
-        {
-            get => _colorPickerSettings.Properties.ActivationAction == ColorPickerActivationAction.OpenColorPickerAndThenEditor;
-            set
-            {
-                if (value && _colorPickerSettings.Properties.ActivationAction != ColorPickerActivationAction.OpenColorPickerAndThenEditor)
-                {
-                    _colorPickerSettings.Properties.ActivationAction = ColorPickerActivationAction.OpenColorPickerAndThenEditor;
-                    OnPropertyChanged(nameof(ActivationOpensEditor));
+                    _colorPickerSettings.Properties.ActivationAction = (ColorPickerActivationAction)value;
+                    OnPropertyChanged(nameof(ActivationBehavior));
                     NotifySettingsChanged();
                 }
             }
@@ -223,7 +199,7 @@ namespace Microsoft.PowerToys.Settings.UI.Library.ViewModels
             var cielabFormatName = ColorRepresentationType.CIELAB.ToString();
             var ciexyzFormatName = ColorRepresentationType.CIEXYZ.ToString();
 
-            formatsUnordered.Add(new ColorFormatModel(hexFormatName, "#EF68FF", visibleFormats.ContainsKey(hexFormatName) && visibleFormats[hexFormatName]));
+            formatsUnordered.Add(new ColorFormatModel(hexFormatName, "ef68ff", visibleFormats.ContainsKey(hexFormatName) && visibleFormats[hexFormatName]));
             formatsUnordered.Add(new ColorFormatModel(rgbFormatName, "rgb(239, 104, 255)", visibleFormats.ContainsKey(rgbFormatName) && visibleFormats[rgbFormatName]));
             formatsUnordered.Add(new ColorFormatModel(hslFormatName, "hsl(294, 100%, 70%)", visibleFormats.ContainsKey(hslFormatName) && visibleFormats[hslFormatName]));
             formatsUnordered.Add(new ColorFormatModel(hsvFormatName, "hsv(294, 59%, 100%)", visibleFormats.ContainsKey(hsvFormatName) && visibleFormats[hsvFormatName]));
