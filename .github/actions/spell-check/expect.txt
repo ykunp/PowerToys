@@ -631,6 +631,7 @@ Farbraum
 FARPROC
 fdw
 feimage
+FFAA
 ffcd
 FFDDDDDD
 fff
@@ -655,7 +656,6 @@ finalizer
 findfast
 findstr
 FIXEDFILEINFO
-FFAA
 FLASHZONES
 FLASHZONESONQUICKSWITCH
 flt
@@ -733,6 +733,7 @@ Hardlines
 HARDWAREINPUT
 hashcode
 Hashset
+Hashtable
 HASHVAL
 hbitmap
 hbmp
@@ -786,6 +787,7 @@ hmonitor
 HOLDENTER
 HOLDESC
 homljgmgpmcbpjbnjpfijnhipfkiclkd
+Homepage
 HOOKPROC
 hostname
 hotkeycontrol
@@ -2437,6 +2439,7 @@ workaround
 Workflow
 workspaces
 wostream
+wostringstream
 wox
 wparam
 wpf

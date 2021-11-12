@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ImageResizer.Extensions;
 using ImageResizer.Properties;
 using ImageResizer.Utilities;
 using Microsoft.VisualBasic.FileIO;
@@ -24,6 +25,14 @@ namespace ImageResizer.Models
         private readonly string _file;
         private readonly string _destinationDirectory;
         private readonly Settings _settings;
+
+        // Filenames to avoid according to https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#file-and-directory-names
+        private static readonly string[] _avoidFilenames =
+            {
+                "CON", "PRN", "AUX", "NUL",
+                "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+                "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
+            };
 
         public ResizeOperation(string file, string destinationDirectory, Settings settings)
         {
@@ -82,11 +91,22 @@ namespace ImageResizer.Models
                         }
                     }
 
+                    if (_settings.RemoveMetadata && metadata != null)
+                    {
+                        // strip any metadata that doesn't affect rendering
+                        var newMetadata = new BitmapMetadata(metadata.Format);
+
+                        metadata.CopyMetadataPropertyTo(newMetadata, "System.Photo.Orientation");
+                        metadata.CopyMetadataPropertyTo(newMetadata, "System.Image.ColorSpace");
+
+                        metadata = newMetadata;
+                    }
+
                     encoder.Frames.Add(
                         BitmapFrame.Create(
                             Transform(originalFrame),
                             thumbnail: null,
-                            metadata, // TODO: Add an option to strip any metadata that doesn't affect rendering (issue #3)
+                            metadata,
                             colorContexts: null));
                 }
 
@@ -193,16 +213,39 @@ namespace ImageResizer.Models
                 extension = supportedExtensions.FirstOrDefault();
             }
 
+            // Remove directory characters from the size's name.
+            string sizeNameSanitized = _settings.SelectedSize.Name;
+            sizeNameSanitized = sizeNameSanitized
+                .Replace('\\', '_')
+                .Replace('/', '_');
+
             // Using CurrentCulture since this is user facing
             var fileName = string.Format(
                 CultureInfo.CurrentCulture,
                 _settings.FileNameFormat,
                 originalFileName,
-                _settings.SelectedSize.Name,
+                sizeNameSanitized,
                 _settings.SelectedSize.Width,
                 _settings.SelectedSize.Height,
                 encoder.Frames[0].PixelWidth,
                 encoder.Frames[0].PixelHeight);
+
+            // Remove invalid characters from the final file name.
+            fileName = fileName
+                .Replace(':', '_')
+                .Replace('*', '_')
+                .Replace('?', '_')
+                .Replace('"', '_')
+                .Replace('<', '_')
+                .Replace('>', '_')
+                .Replace('|', '_');
+
+            // Avoid creating not recommended filenames
+            if (_avoidFilenames.Contains(fileName.ToUpperInvariant()))
+            {
+                fileName = fileName + "_";
+            }
+
             var path = _fileSystem.Path.Combine(directory, fileName + extension);
             var uniquifier = 1;
             while (_fileSystem.File.Exists(path))
