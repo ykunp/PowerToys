@@ -11,9 +11,9 @@ jobs:
     BuildPlatform: ${{ parameters.platform }}
   pool:
     ${{ if eq(variables['System.CollectionUri'], 'https://dev.azure.com/ms/') }}:
-      name: 'windows-2019'
+      vmImage: 'windows-2019'
     ${{ if ne(variables['System.CollectionUri'], 'https://dev.azure.com/ms/') }}:
-      name: 'windows-2019'
+      vmImage: 'windows-2019'
   timeoutInMinutes: 120
   strategy:
     maxParallel: 10
