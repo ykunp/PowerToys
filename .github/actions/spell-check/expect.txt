@@ -450,6 +450,7 @@ desktopshorcutinstalled
 desktopwindowxamlsource
 dest
 DEU
+Deuchert
 devblogs
 devdocs
 devenum
@@ -699,6 +700,7 @@ gdi
 gdiplus
 GDISCALED
 generatesqlfromuserquery
+GETDESKWALLPAPER
 GETDISPINFO
 GETDLGCODE
 GETDPISCALEDSIZE
@@ -762,8 +764,10 @@ hglobal
 hhk
 HHmmss
 HHOOK
+hhx
 HICON
 HIDEWINDOW
+highlighter
 HIMAGELIST
 himl
 hinst
@@ -787,7 +791,7 @@ hmonitor
 HOLDENTER
 HOLDESC
 homljgmgpmcbpjbnjpfijnhipfkiclkd
-Homepage
+homepage
 HOOKPROC
 hostname
 hotkeycontrol
@@ -1410,6 +1414,7 @@ NESW
 netcore
 netcoreapp
 netcpl
+netlify
 netframework
 NETFX
 netsetup
@@ -1708,6 +1713,7 @@ PWSTR
 pwsz
 pwtd
 qianlifeng
+Qin
 qit
 QITAB
 QITABENT
@@ -2083,6 +2089,7 @@ Switchbetweenvirtualdesktops
 SWP
 swprintf
 SWRESTORE
+swscanf
 SYMED
 SYMOPT
 SYNCMFT
@@ -2334,7 +2341,7 @@ VTABLE
 Vtbl
 wav
 WBounds
-Wca
+wca
 wcautil
 WCE
 wcex

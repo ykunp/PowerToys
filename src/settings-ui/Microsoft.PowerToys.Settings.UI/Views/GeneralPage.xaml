@@ -61,14 +61,14 @@
                     <muxc:InfoBar x:Uid="General_UpToDate"
                                   IsClosable="False"
                                   Severity="Success"
-                                  IsTabStop="True"
+                                  IsTabStop="{Binding IsNewVersionCheckedAndUpToDate, Mode=OneWay}"
                                   IsOpen="{Binding IsNewVersionCheckedAndUpToDate, Mode=OneWay}"/>
 
                     <!-- New version available -->
                     <muxc:InfoBar x:Uid="General_NewVersionAvailable"
                                   IsClosable="False"
                                   Severity="Informational"
-                                  IsTabStop="True"
+                                  IsTabStop="{Binding PowerToysUpdatingState, Mode=OneWay, Converter={StaticResource UpdateStateToBoolConverter}, ConverterParameter=ReadyToDownload}"
                                   IsOpen="{Binding PowerToysUpdatingState, Mode=OneWay, Converter={StaticResource UpdateStateToBoolConverter}, ConverterParameter=ReadyToDownload}"
                                   Message="{Binding PowerToysNewAvailableVersion, Mode=OneWay}">
                         <muxc:InfoBar.Content>
@@ -104,7 +104,7 @@
                     <muxc:InfoBar x:Uid="General_NewVersionReadyToInstall"
                                   IsClosable="False"
                                   Severity="Success"
-                                  IsTabStop="True"
+                                  IsTabStop="{Binding PowerToysUpdatingState, Mode=OneWay, Converter={StaticResource UpdateStateToBoolConverter}, ConverterParameter=ReadyToInstall}"
                                   IsOpen="{Binding PowerToysUpdatingState, Mode=OneWay, Converter={StaticResource UpdateStateToBoolConverter}, ConverterParameter=ReadyToInstall}"
                                   Message="{Binding PowerToysNewAvailableVersion}">
                         <muxc:InfoBar.Content>
@@ -129,7 +129,7 @@
                     <muxc:InfoBar x:Uid="General_FailedToDownloadTheNewVersion"
                                   IsClosable="False"
                                   Severity="Error"
-                                  IsTabStop="True"
+                                  IsTabStop="{Binding PowerToysUpdatingState, Mode=OneWay, Converter={StaticResource UpdateStateToBoolConverter}, ConverterParameter=ErrorDownloading}"
                                   IsOpen="{Binding PowerToysUpdatingState, Mode=OneWay, Converter={StaticResource UpdateStateToBoolConverter}, ConverterParameter=ErrorDownloading}"
                                   Message="{Binding PowerToysNewAvailableVersion}">
                         <muxc:InfoBar.Content>
@@ -162,9 +162,11 @@
 
                     <controls:Setting x:Uid="GeneralPage_ToggleSwitch_AutoDownloadUpdates"
                                       Margin="0,-6,0,0"
+                                      IsEnabled="{Binding AutoUpdatesEnabled}" 
                                       Visibility="{Binding Mode=OneWay, Path=IsAdmin, Converter={StaticResource VisibleIfTrueConverter}}">
-                        <ToggleSwitch  IsOn="{Binding Mode=TwoWay, Path=AutoDownloadUpdates}"
-                                       IsEnabled="{Binding AutoUpdatesEnabled}" />
+                        <controls:Setting.ActionContent>
+                            <ToggleSwitch  IsOn="{Binding Mode=TwoWay, Path=AutoDownloadUpdates}" />
+                        </controls:Setting.ActionContent>
                     </controls:Setting>
                     </controls:SettingsGroup>
 
@@ -188,6 +190,7 @@
                                 <controls:Setting x:Uid="GeneralSettings_AlwaysRunAsAdminText" IsEnabled="{Binding Mode=OneWay, Path=IsElevated}" Style="{StaticResource ExpanderContentSettingStyle}">
                                     <controls:Setting.Description>
                                         <HyperlinkButton NavigateUri="https://aka.ms/powertoysDetectedElevatedHelp"
+                                                         Visibility="{Binding Mode=OneWay, Path=IsElevated}"
                                                          x:Uid="GeneralPage_ToggleSwitch_AlwaysRunElevated_Link"/>
                                     </controls:Setting.Description>
                                     <controls:Setting.ActionContent>
@@ -196,9 +199,14 @@
                                 </controls:Setting>
                                 <muxc:InfoBar x:Uid="General_RunAsAdminRequired" 
                                           Severity="Warning"
-                                          IsTabStop="True"
+                                          IsTabStop="{Binding Mode=OneWay, Path=IsElevated, Converter={StaticResource NegationConverter}}"
                                           IsClosable="False"
-                                          IsOpen="{Binding Mode=OneWay, Path=IsElevated, Converter={StaticResource NegationConverter}}"/>
+                                          IsOpen="{Binding Mode=OneWay, Path=IsElevated, Converter={StaticResource NegationConverter}}">
+                                    <muxc:InfoBar.ActionButton>
+                                        <HyperlinkButton NavigateUri="https://aka.ms/powertoysDetectedElevatedHelp"
+                                                         x:Uid="GeneralPage_ToggleSwitch_AlwaysRunElevated_Link"/>
+                                    </muxc:InfoBar.ActionButton>
+                                </muxc:InfoBar>
                             </StackPanel>
                         </controls:SettingExpander.Content>
                     </controls:SettingExpander>

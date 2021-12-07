@@ -190,6 +190,9 @@
   <data name="VideoConference_Camera.Header" xml:space="preserve">
     <value>Camera</value>
   </data>
+  <data name="VideoConference_Camera.Description" xml:space="preserve">
+    <value>To use this feature, make sure to select PowerToys VideoConference Mute as your camera source in your apps.</value>
+  </data>
   <data name="VideoConference_Microphone.Header" xml:space="preserve">
     <value>Microphone</value>
   </data>
@@ -655,11 +658,11 @@
     <value>Shows a help overlay with Windows shortcuts.</value>
   </data>
   <data name="ShortcutGuide_PressTime.Header" xml:space="preserve">
-    <value>Press duration before showing (ms)</value>
+    <value>Press duration before showing</value>
     <comment>pressing a key in milliseconds</comment>
   </data>
   <data name="ShortcutGuide_PressTime.Description" xml:space="preserve">
-    <value>How long to press the Windows key to activate the module</value>
+    <value>How long to press the Windows key to activate the module (in ms)</value>
   </data>
   <data name="ShortcutGuide_ActivationMethod.Header" xml:space="preserve">
     <value>Activation method</value>
@@ -993,8 +996,12 @@ Made with 💗 by Microsoft and the PowerToys community.</value>
   <data name="FileExplorerPreview_IconThumbnail_GroupSettings.Header" xml:space="preserve">
     <value>Icon Preview</value>
   </data>
-  <data name="FileExplorerPreview_PreviewPane_GroupSettings.Header" xml:space="preserve">
+  <data name="FileExplorerPreview_PreviewPane.Header" xml:space="preserve">
     <value>Preview Pane</value>
+  </data>
+  <data name="FileExplorerPreview_PreviewPane.Description" xml:space="preserve">
+    <value>Ensure that Preview Pane is open by toggling the view with Alt + P in File Explorer.</value>
+    <comment>Preview Pane and File Explorer are app/feature names in Windows. 'Alt + P' is a shortcut</comment>
   </data>
   <data name="FileExplorerPreview_RunAsAdminRequired.Title" xml:space="preserve">
     <value>You need to run as administrator to modify these settings.</value>
@@ -1247,7 +1254,7 @@ Made with 💗 by Microsoft and the PowerToys community.</value>
     <value>Activation shortcut</value>
   </data>
   <data name="Activation_Shortcut.Description" xml:space="preserve">
-    <value>Customize the keyboard shortcut to activate this module</value>
+    <value>Customize the shortcut to activate this module</value>
   </data>
   <data name="Oobe_GetStarted.Text" xml:space="preserve">
     <value>Let's get started!</value>
@@ -1478,10 +1485,10 @@ From there, simply click on a Markdown file, PDF file or SVG icon in the File Ex
     <value>Awake is a Windows tool designed to keep your PC awake on-demand without having to manage its power settings. This behavior can be helpful when running time-consuming tasks while ensuring that your PC does not go to sleep or turn off its screens.</value>
   </data>
   <data name="Oobe_Awake_HowToUse.Text" xml:space="preserve">
-    <value>Open {PowerToys Settings} and enable Awake</value>
+    <value>Open **PowerToys Settings** and enable Awake</value>
   </data>
   <data name="Oobe_Awake_TipsAndTricks.Text" xml:space="preserve">
-    <value>You can always change modes quickly by {right-clicking the Awake icon} in the system tray.</value>
+    <value>You can always change modes quickly by **right-clicking the Awake icon** in the system tray.</value>
   </data>
   <data name="General_FailedToDownloadTheNewVersion.Title" xml:space="preserve">
     <value>An error occurred trying to install this update:</value>
@@ -1536,6 +1543,9 @@ From there, simply click on a Markdown file, PDF file or SVG icon in the File Ex
   </data>
   <data name="EditButton.AutomationProperties.Name" xml:space="preserve">
     <value>Edit</value>
+  </data>
+	<data name="ImageResizer_EditSize.AutomationProperties.Name" xml:space="preserve">
+    <value>Edit size</value>
   </data>
   <data name="No" xml:space="preserve">
     <value>No</value>
@@ -1627,8 +1637,16 @@ From there, simply click on a Markdown file, PDF file or SVG icon in the File Ex
     <comment>Mouse as in the hardware peripheral</comment>
   </data>
   <data name="Oobe_MouseUtils_FindMyMouse_Description.Text" xml:space="preserve">
-    <value>Click twice on the Left Control key to focus on your mouse.</value>
+    <value>Press the left Ctrl key twice to focus the mouse pointer.</value>
     <comment>Mouse as in the hardware peripheral. Key as in a keyboard key</comment>
+  </data>
+  <data name="Oobe_MouseUtils_MouseHighlighter.Text" xml:space="preserve">
+    <value>Mouse Highlighter</value>
+    <comment>Mouse as in the hardware peripheral.</comment>
+  </data>
+  <data name="Oobe_MouseUtils_MouseHighlighter_Description.Text" xml:space="preserve">
+    <value>Use a keyboard shortcut highlight left and right mouse clicks.</value>
+    <comment>Mouse as in the hardware peripheral.</comment>
   </data>
   <data name="Launch_Run.Content" xml:space="preserve">
     <value>Launch PowerToys Run</value>
@@ -1709,17 +1727,88 @@ From there, simply click on a Markdown file, PDF file or SVG icon in the File Ex
   <data name="MouseUtils.ModuleDescription" xml:space="preserve">
     <value>A collection of mouse utilities.</value>
   </data>
+  <data name="MouseUtils_FindMyMouse.Header" xml:space="preserve">
+    <value>Find My Mouse</value>
+    <comment>Refers to the utility name</comment>
+  </data>
+  <data name="MouseUtils_FindMyMouse.Description" xml:space="preserve">
+    <value>Find My Mouse highlights the position of the cursor when pressing the left Ctrl key twice.</value>
+    <comment>"Ctrl" is a keyboard key. "Find My Mouse" is the name of the utility</comment>
+  </data>
   <data name="MouseUtils_Enable_FindMyMouse.Header" xml:space="preserve">
     <value>Enable Find My Mouse</value>
     <comment>"Find My Mouse" is the name of the utility.</comment>
   </data>
-  <data name="MouseUtils_Enable_FindMyMouse.Description" xml:space="preserve">
-    <value>Press the Left Control key twice to focus the mouse pointer.</value>
-    <comment>"Left Control" is a keyboard key.</comment>
-  </data>
   <data name="MouseUtils_Prevent_Activation_On_Game_Mode.Content" xml:space="preserve">
     <value>Do not activate when Game Mode is on</value>
     <comment>"Game mode" is the Windows feature to prevent notification when playing a game.</comment>
+  </data>
+  <data name="MouseUtils_FindMyMouse_BackgroundColor.Header" xml:space="preserve">
+    <value>Background color</value>
+  </data>
+  <data name="MouseUtils_FindMyMouse_SpotlightColor.Header" xml:space="preserve">
+    <value>Spotlight color</value>
+  </data>
+  <data name="MouseUtils_FindMyMouse_OverlayOpacity.Header" xml:space="preserve">
+    <value>Overlay opacity</value>
+  </data>
+  <data name="MouseUtils_FindMyMouse_SpotlightRadius.Header" xml:space="preserve">
+    <value>Spotlight radius</value>
+  </data>
+  <data name="MouseUtils_FindMyMouse_SpotlightInitialZoom.Header" xml:space="preserve">
+    <value>Spotlight initial zoom</value>
+  </data>
+  <data name="MouseUtils_FindMyMouse_SpotlightInitialZoom.Description" xml:space="preserve">
+    <value>Spotlight zoom factor at animation start</value>
+  </data>
+  <data name="MouseUtils_FindMyMouse_AnimationDurationMs.Header" xml:space="preserve">
+    <value>Animation duration</value>
+  </data>
+  <data name="MouseUtils_FindMyMouse_AnimationDurationMs.Description" xml:space="preserve">
+    <value>How long it takes for the spotlight to appear/disappear (in ms)</value>
+  </data>
+  <data name="MouseUtils_MouseHighlighter.Header" xml:space="preserve">
+    <value>Mouse Highlighter</value>
+    <comment>Refers to the utility name</comment>
+  </data>
+  <data name="MouseUtils_MouseHighlighter.Description" xml:space="preserve">
+    <value>Mouse Highlighter mode will highlight mouse clicks.</value>
+    <comment>"Mouse Highlighter" is the name of the utility. Mouse is the hardware mouse.</comment>
+  </data>
+  <data name="MouseUtils_Enable_MouseHighlighter.Header" xml:space="preserve">
+    <value>Enable Mouse Highlighter</value>
+    <comment>"Find My Mouse" is the name of the utility.</comment>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_ActivationShortcut.Header" xml:space="preserve">
+    <value>Activation shortcut</value>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_ActivationShortcut.Description" xml:space="preserve">
+    <value>Customize the shortcut to turn on or off this mode</value>
+    <comment>"Mouse Highlighter" is the name of the utility. Mouse is the hardware mouse.</comment>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_LeftButtonClickColor.Header" xml:space="preserve">
+    <value>Left button highlight color</value>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_RightButtonClickColor.Header" xml:space="preserve">
+    <value>Right button highlight color</value>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_HighlightOpacity.Header" xml:space="preserve">
+    <value>Opacity</value>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_HighlightRadius.Header" xml:space="preserve">
+    <value>Radius</value>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_FadeDelayMs.Header" xml:space="preserve">
+    <value>Fade delay</value>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_FadeDelayMs.Description" xml:space="preserve">
+    <value>How long it takes before a highlight starts to disappear (in ms)</value>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_FadeDurationMs.Header" xml:space="preserve">
+    <value>Fade duration</value>
+  </data>
+  <data name="MouseUtils_MouseHighlighter_FadeDurationMs.Description" xml:space="preserve">
+    <value>Duration of the disappear animation (in ms)</value>
   </data>
   <data name="FancyZones_Radio_Custom_Colors.Content" xml:space="preserve">
     <value>Custom colors</value>
@@ -1735,5 +1824,8 @@ From there, simply click on a Markdown file, PDF file or SVG icon in the File Ex
   </data>
   <data name="FancyZones_Zone_Appearance.Header" xml:space="preserve">
     <value>Zone appearance</value>
+  </data>
+  <data name="VideoConference_RunAsAdminRequired.Title" xml:space="preserve">
+    <value>You need to run as administrator to modify these settings.</value>
   </data>
 </root>

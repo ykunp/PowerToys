@@ -148,7 +148,8 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
             L"modules/ShortcutGuide/ShortcutGuideModuleInterface/ShortcutGuideModuleInterface.dll",
             L"modules/ColorPicker/ColorPicker.dll",
             L"modules/Awake/AwakeModuleInterface.dll",
-            L"modules/MouseUtils/FindMyMouse.dll"
+            L"modules/MouseUtils/FindMyMouse.dll" ,
+            L"modules/MouseUtils/MouseHighlighter.dll"
 
         };
         const auto VCM_PATH = L"modules/VideoConference/VideoConferenceModule.dll";
@@ -176,7 +177,7 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
             }
         }
         // Start initial powertoys
-        start_initial_powertoys();
+        start_enabled_powertoys();
 
         Trace::EventLaunch(get_product_version(), isProcessElevated);
 
@@ -402,6 +403,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         MessageBoxW(nullptr, std::wstring(err_what.begin(), err_what.end()).c_str(), GET_RESOURCE_STRING(IDS_ERROR).c_str(), MB_OK | MB_ICONERROR);
         result = -1;
     }
+
+    // Save settings on closing
+    auto general_settings = load_general_settings();
+    apply_general_settings(general_settings);
 
     // We need to release the mutexes to be able to restart the application
     if (msi_mutex)
