@@ -13,5 +13,8 @@ namespace Community.PowerToys.Run.Plugin.VSCodeWorkspaces.WorkspacesHelper
 
         [JsonPropertyName("label")]
         public string Label { get; set; }
+
+        [JsonPropertyName("workspace")]
+        public VSCodeWorkspaceProperty Workspace { get; set; }
     }
 }
