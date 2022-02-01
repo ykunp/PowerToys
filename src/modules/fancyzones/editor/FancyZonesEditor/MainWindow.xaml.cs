@@ -250,7 +250,8 @@ namespace FancyZonesEditor
             model.Persist();
 
             App.Overlay.SetLayoutSettings(App.Overlay.Monitors[App.Overlay.CurrentDesktop], model);
-            App.FancyZonesEditorIO.SerializeZoneSettings();
+            App.FancyZonesEditorIO.SerializeAppliedLayouts();
+            App.FancyZonesEditorIO.SerializeCustomLayouts();
         }
 
         private void Announce(string name, string message)
@@ -271,7 +272,8 @@ namespace FancyZonesEditor
             {
                 _settings.SetAppliedModel(model);
                 App.Overlay.SetLayoutSettings(App.Overlay.Monitors[App.Overlay.CurrentDesktop], model);
-                App.FancyZonesEditorIO.SerializeZoneSettings();
+                App.FancyZonesEditorIO.SerializeAppliedLayouts();
+                App.FancyZonesEditorIO.SerializeCustomLayouts();
             }
         }
 
@@ -280,7 +282,10 @@ namespace FancyZonesEditor
             Logger.LogTrace();
             CancelLayoutChanges();
 
-            App.FancyZonesEditorIO.SerializeZoneSettings();
+            App.FancyZonesEditorIO.SerializeAppliedLayouts();
+            App.FancyZonesEditorIO.SerializeCustomLayouts();
+            App.FancyZonesEditorIO.SerializeLayoutHotkeys();
+            App.FancyZonesEditorIO.SerializeLayoutTemplates();
             App.Overlay.CloseLayoutWindow();
             App.Current.Shutdown();
         }
@@ -423,7 +428,10 @@ namespace FancyZonesEditor
                 App.Overlay.SetLayoutSettings(App.Overlay.Monitors[App.Overlay.CurrentDesktop], model);
             }
 
-            App.FancyZonesEditorIO.SerializeZoneSettings();
+            App.FancyZonesEditorIO.SerializeAppliedLayouts();
+            App.FancyZonesEditorIO.SerializeCustomLayouts();
+            App.FancyZonesEditorIO.SerializeLayoutTemplates();
+            App.FancyZonesEditorIO.SerializeLayoutHotkeys();
 
             // reset selected model
             Select(_settings.AppliedModel);
@@ -467,7 +475,8 @@ namespace FancyZonesEditor
                     }
                 }
 
-                App.FancyZonesEditorIO.SerializeZoneSettings();
+                App.FancyZonesEditorIO.SerializeAppliedLayouts();
+                App.FancyZonesEditorIO.SerializeCustomLayouts();
                 model.Delete();
             }
         }

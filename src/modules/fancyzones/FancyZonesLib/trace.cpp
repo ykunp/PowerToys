@@ -2,8 +2,12 @@
 #include "trace.h"
 #include "FancyZonesLib/ZoneSet.h"
 #include "FancyZonesLib/Settings.h"
-#include "FancyZonesLib/FancyZonesData.h"
+#include "FancyZonesData/AppZoneHistory.h"
+#include "FancyZonesLib/FancyZonesData/AppliedLayouts.h"
+#include "FancyZonesLib/FancyZonesData/CustomLayouts.h"
+#include "FancyZonesLib/FancyZonesData/LayoutHotkeys.h"
 #include "FancyZonesLib/FancyZonesDataTypes.h"
+#include "FancyZonesLib/util.h"
 
 // Telemetry strings should not be localized.
 #define LoggingProviderKey "Microsoft.PowerToys"
@@ -141,11 +145,10 @@ void Trace::FancyZones::OnKeyDown(DWORD vkCode, bool win, bool control, bool inM
 
 void Trace::FancyZones::DataChanged() noexcept
 {
-    const FancyZonesData& data = FancyZonesDataInstance();
-    int appsHistorySize = static_cast<int>(data.GetAppZoneHistoryMap().size());
-    const auto& customZones = data.GetCustomZoneSetsMap();
-    const auto& devices = data.GetDeviceInfoMap();
-    const auto& quickKeys = data.GetLayoutQuickKeys();
+    int appsHistorySize = static_cast<int>(AppZoneHistory::instance().GetFullAppZoneHistory().size());
+    const auto& customZones = CustomLayouts::instance().GetAllLayouts();
+    const auto& layouts = AppliedLayouts::instance().GetAppliedLayoutMap();
+    auto quickKeysCount = LayoutHotkeys::instance().GetHotkeysCount();
 
     std::unique_ptr<INT32[]> customZonesArray(new (std::nothrow) INT32[customZones.size()]);
     if (!customZonesArray)
@@ -153,7 +156,7 @@ void Trace::FancyZones::DataChanged() noexcept
         return;
     }
 
-    auto getCustomZoneCount = [&data](const std::variant<FancyZonesDataTypes::CanvasLayoutInfo, FancyZonesDataTypes::GridLayoutInfo>& layoutInfo) -> int {
+    auto getCustomZoneCount = [](const std::variant<FancyZonesDataTypes::CanvasLayoutInfo, FancyZonesDataTypes::GridLayoutInfo>& layoutInfo) -> int {
         if (std::holds_alternative<FancyZonesDataTypes::GridLayoutInfo>(layoutInfo))
         {
             const auto& info = std::get<FancyZonesDataTypes::GridLayoutInfo>(layoutInfo);
@@ -177,9 +180,9 @@ void Trace::FancyZones::DataChanged() noexcept
 
     // ActiveZoneSetsList
     std::wstring activeZoneSetInfo;
-    for (const auto& [id, device] : devices)
+    for (const auto& [id, layout] : layouts)
     {
-        const FancyZonesDataTypes::ZoneSetLayoutType type = device.activeZoneSet.type;
+        const FancyZonesDataTypes::ZoneSetLayoutType type = layout.type;
         if (!activeZoneSetInfo.empty())
         {
             activeZoneSetInfo += L"; ";
@@ -189,15 +192,16 @@ void Trace::FancyZones::DataChanged() noexcept
         int zoneCount = -1;
         if (type == FancyZonesDataTypes::ZoneSetLayoutType::Custom)
         {
-            const auto& activeCustomZone = customZones.find(device.activeZoneSet.uuid);
+            auto guid = layout.uuid;
+            const auto& activeCustomZone = customZones.find(guid);
             if (activeCustomZone != customZones.end())
             {
                 zoneCount = getCustomZoneCount(activeCustomZone->second.info);
-            }
+            }  
         }
         else
         {
-            zoneCount = device.zoneCount;
+            zoneCount = layout.zoneCount;
         }
 
         if (zoneCount != -1)
@@ -218,9 +222,9 @@ void Trace::FancyZones::DataChanged() noexcept
         TraceLoggingInt32(appsHistorySize, AppsInHistoryCountKey),
         TraceLoggingInt32(static_cast<int>(customZones.size()), CustomZoneSetCountKey),
         TraceLoggingInt32Array(customZonesArray.get(), static_cast<int>(customZones.size()), NumberOfZonesForEachCustomZoneSetKey),
-        TraceLoggingInt32(static_cast<int>(devices.size()), ActiveZoneSetsCountKey),
+        TraceLoggingInt32(static_cast<int>(layouts.size()), ActiveZoneSetsCountKey),
         TraceLoggingWideString(activeZoneSetInfo.c_str(), ActiveZoneSetsListKey),
-        TraceLoggingInt32(static_cast<int>(quickKeys.size()), LayoutUsingQuickKeyCountKey));
+        TraceLoggingInt32(static_cast<int>(quickKeysCount), LayoutUsingQuickKeyCountKey));
 }
 
 void Trace::FancyZones::EditorLaunched(int value) noexcept

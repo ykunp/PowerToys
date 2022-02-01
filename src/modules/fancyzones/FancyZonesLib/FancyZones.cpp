@@ -12,6 +12,11 @@
 #include <common/SettingsAPI/FileWatcher.h>
 
 #include <FancyZonesLib/FancyZonesData.h>
+#include <FancyZonesLib/FancyZonesData/AppliedLayouts.h>
+#include <FancyZonesLib/FancyZonesData/AppZoneHistory.h>
+#include <FancyZonesLib/FancyZonesData/CustomLayouts.h>
+#include <FancyZonesLib/FancyZonesData/LayoutHotkeys.h>
+#include <FancyZonesLib/FancyZonesData/LayoutTemplates.h>
 #include <FancyZonesLib/FancyZonesWindowProperties.h>
 #include <FancyZonesLib/FancyZonesWinHookEventIDs.h>
 #include <FancyZonesLib/MonitorUtils.h>
@@ -54,9 +59,6 @@ public:
         m_windowMoveHandler(settings, [this]() {
             PostMessageW(m_window, WM_PRIV_LOCATIONCHANGE, NULL, NULL);
         }),
-        m_zonesSettingsFileWatcher(FancyZonesDataInstance().GetZonesSettingsFileName(), [this]() {
-            PostMessageW(m_window, WM_PRIV_FILE_UPDATE, NULL, NULL);
-        }),
         m_settingsFileWatcher(FancyZonesDataInstance().GetSettingsFileName(), [this]() {
             PostMessageW(m_window, WM_PRIV_SETTINGS_CHANGED, NULL, NULL);
         }),
@@ -68,6 +70,13 @@ public:
         })
     {
         this->disableModuleCallback = std::move(disableModuleCallback);
+
+        FancyZonesDataInstance().ReplaceZoneSettingsFileFromOlderVersions();
+        LayoutTemplates::instance().LoadData();
+        CustomLayouts::instance().LoadData();
+        LayoutHotkeys::instance().LoadData();
+        AppliedLayouts::instance().LoadData();
+        AppZoneHistory::instance().LoadData();
     }
 
     // IFancyZones
@@ -191,7 +200,6 @@ private:
     MonitorWorkAreaHandler m_workAreaHandler;
     VirtualDesktop m_virtualDesktop;
 
-    FileWatcher m_zonesSettingsFileWatcher;
     FileWatcher m_settingsFileWatcher;
 
     winrt::com_ptr<IFancyZonesSettings> m_settings{};
@@ -268,7 +276,8 @@ FancyZones::Run() noexcept
         }
     });
 
-    FancyZonesDataInstance().SetVirtualDesktopCheckCallback(std::bind(&VirtualDesktop::IsVirtualDesktopIdSavedInRegistry, &m_virtualDesktop, std::placeholders::_1));
+    AppliedLayouts::instance().SetVirtualDesktopCheckCallback(std::bind(&VirtualDesktop::IsVirtualDesktopIdSavedInRegistry, &m_virtualDesktop, std::placeholders::_1));
+    AppZoneHistory::instance().SetVirtualDesktopCheckCallback(std::bind(&VirtualDesktop::IsVirtualDesktopIdSavedInRegistry, &m_virtualDesktop, std::placeholders::_1));
 }
 
 // IFancyZones
@@ -327,15 +336,15 @@ std::pair<winrt::com_ptr<IWorkArea>, ZoneIndexSet> FancyZones::GetAppZoneHistory
 void FancyZones::MoveWindowIntoZone(HWND window, winrt::com_ptr<IWorkArea> workArea, const ZoneIndexSet& zoneIndexSet) noexcept
 {
     _TRACER_;
-    auto& fancyZonesData = FancyZonesDataInstance();
-    if (!fancyZonesData.IsAnotherWindowOfApplicationInstanceZoned(window, workArea->UniqueId()))
+
+    if (!AppZoneHistory::instance().IsAnotherWindowOfApplicationInstanceZoned(window, workArea->UniqueId()))
     {
         if (workArea)
         {
             Trace::FancyZones::SnapNewWindowIntoZone(workArea->ZoneSet());
         }
         m_windowMoveHandler.MoveWindowIntoZoneByIndexSet(window, zoneIndexSet, workArea);
-        fancyZonesData.UpdateProcessIdToHandleMap(window, workArea->UniqueId());
+        AppZoneHistory::instance().UpdateProcessIdToHandleMap(window, workArea->UniqueId());
     }
 }
 
@@ -486,8 +495,8 @@ FancyZones::OnKeyDown(PKBDLLHOOKSTRUCT info) noexcept
 
         if (changeLayoutWhileNotDragging || changeLayoutWhileDragging)
         {
-            auto quickKeysMap = FancyZonesDataInstance().GetLayoutQuickKeys();
-            if (std::any_of(quickKeysMap.begin(), quickKeysMap.end(), [=](auto item) { return item.second == digitPressed; }))
+            auto layoutId = LayoutHotkeys::instance().GetLayoutId(digitPressed);
+            if (layoutId.has_value())
             {
                 PostMessageW(m_window, WM_PRIV_QUICK_LAYOUT_KEY, 0, static_cast<LPARAM>(digitPressed));
                 Trace::FancyZones::QuickLayoutSwitched(changeLayoutWhileNotDragging);
@@ -762,9 +771,21 @@ LRESULT FancyZones::WndProc(HWND window, UINT message, WPARAM wparam, LPARAM lpa
             auto hwnd = reinterpret_cast<HWND>(wparam);
             WindowCreated(hwnd);
         }
-        else if (message == WM_PRIV_FILE_UPDATE)
+        else if (message == WM_PRIV_LAYOUT_HOTKEYS_FILE_UPDATE)
         {
-            FancyZonesDataInstance().LoadFancyZonesData();
+            LayoutHotkeys::instance().LoadData();
+        }
+        else if (message == WM_PRIV_LAYOUT_TEMPLATES_FILE_UPDATE)
+        {
+            LayoutTemplates::instance().LoadData();
+        }
+        else if (message == WM_PRIV_CUSTOM_LAYOUTS_FILE_UPDATE)
+        {
+            CustomLayouts::instance().LoadData();
+        }
+        else if (message == WM_PRIV_APPLIED_LAYOUTS_FILE_UPDATE)
+        {
+            AppliedLayouts::instance().LoadData();
             UpdateZoneSets();
         }
         else if (message == WM_PRIV_QUICK_LAYOUT_KEY)
@@ -878,7 +899,7 @@ void FancyZones::AddWorkArea(HMONITOR monitor, const std::wstring& deviceId) noe
         if (workArea)
         {
             m_workAreaHandler.AddWorkArea(m_currentDesktopId, monitor, workArea);
-            FancyZonesDataInstance().SaveZoneSettings();
+            AppliedLayouts::instance().SaveData();
         }
     }
 }
@@ -1200,10 +1221,12 @@ void FancyZones::RegisterVirtualDesktopUpdates() noexcept
     if (guids.has_value())
     {
         m_workAreaHandler.RegisterUpdates(*guids);
-        FancyZonesDataInstance().RemoveDeletedDesktops(*guids);
+        AppZoneHistory::instance().RemoveDeletedVirtualDesktops(*guids);
+        AppliedLayouts::instance().RemoveDeletedVirtualDesktops(*guids);
     }
 
-    FancyZonesDataInstance().SyncVirtualDesktops(m_currentDesktopId);
+    AppZoneHistory::instance().SyncVirtualDesktops(m_currentDesktopId);
+    AppliedLayouts::instance().SyncVirtualDesktops(m_currentDesktopId);
 }
 
 void FancyZones::UpdateHotkey(int hotkeyId, const PowerToysSettings::HotkeyObject& hotkeyObject, bool enable) noexcept
@@ -1252,8 +1275,8 @@ void FancyZones::OnSettingsChanged() noexcept
 void FancyZones::OnEditorExitEvent() noexcept
 {
     // Collect information about changes in zone layout after editor exited.
-    FancyZonesDataInstance().LoadFancyZonesData();
-    FancyZonesDataInstance().SyncVirtualDesktops(m_currentDesktopId);
+    AppZoneHistory::instance().SyncVirtualDesktops(m_currentDesktopId);
+    AppliedLayouts::instance().SyncVirtualDesktops(m_currentDesktopId);
     UpdateZoneSets();
 }
 
@@ -1293,28 +1316,30 @@ bool FancyZones::ShouldProcessSnapHotkey(DWORD vkCode) noexcept
 
 void FancyZones::ApplyQuickLayout(int key) noexcept
 {
-    std::wstring uuid;
-    for (auto [layoutUuid, hotkey] : FancyZonesDataInstance().GetLayoutQuickKeys())
-    {
-        if (hotkey == key)
-        {
-            uuid = layoutUuid;
-        }
-    }
-
-    auto workArea = m_workAreaHandler.GetWorkAreaFromCursor(m_currentDesktopId);
-
-    // Find a custom zone set with this uuid and apply it
-    auto customZoneSets = FancyZonesDataInstance().GetCustomZoneSetsMap();
-
-    if (!customZoneSets.contains(uuid))
+    auto layoutId = LayoutHotkeys::instance().GetLayoutId(key);
+    if (!layoutId)
     {
         return;
     }
 
-    FancyZonesDataTypes::ZoneSetData data{ .uuid = uuid, .type = FancyZonesDataTypes::ZoneSetLayoutType::Custom };
-    FancyZonesDataInstance().SetActiveZoneSet(workArea->UniqueId(), data);
-    FancyZonesDataInstance().SaveZoneSettings();
+    // Find a custom zone set with this uuid and apply it
+    auto layout = CustomLayouts::instance().GetLayout(layoutId.value());
+    if (!layout)
+    {
+        return;
+    }
+
+    auto uuidStr = FancyZonesUtils::GuidToString(layoutId.value());
+    if (!uuidStr)
+    {
+        return;
+    }
+
+    FancyZonesDataTypes::ZoneSetData data{ .uuid = uuidStr.value(), .type = FancyZonesDataTypes::ZoneSetLayoutType::Custom };
+    
+    auto workArea = m_workAreaHandler.GetWorkAreaFromCursor(m_currentDesktopId);
+    AppliedLayouts::instance().ApplyLayout(workArea->UniqueId(), data);
+    AppliedLayouts::instance().SaveData();
     UpdateZoneSets();
     FlashZones();
 }

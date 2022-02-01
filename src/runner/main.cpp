@@ -151,7 +151,7 @@ int runner(bool isProcessElevated, bool openSettings, std::string settingsWindow
             L"modules/MouseUtils/PowerToys.FindMyMouse.dll" ,
             L"modules/MouseUtils/PowerToys.MouseHighlighter.dll",
             L"modules/AlwaysOnTop/PowerToys.AlwaysOnTopModuleInterface.dll",
-
+            L"modules/MouseUtils/PowerToys.MousePointerCrosshairs.dll",
         };
         const auto VCM_PATH = L"modules/VideoConference/PowerToys.VideoConferenceModule.dll";
         if (const auto mf = LoadLibraryA("mf.dll"))
@@ -406,8 +406,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
 
     // Save settings on closing
-    auto general_settings = load_general_settings();
-    apply_general_settings(general_settings);
+    auto general_settings = get_general_settings();
+    PTSettingsHelper::save_general_settings(general_settings.to_json());
 
     // We need to release the mutexes to be able to restart the application
     if (msi_mutex)
