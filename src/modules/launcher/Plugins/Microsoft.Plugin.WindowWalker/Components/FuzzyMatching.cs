@@ -78,6 +78,26 @@ namespace Microsoft.Plugin.WindowWalker.Components
             return bestMatch;
         }
 
+        public static List<int> SimpleMatch(string text, string searchText)
+        {
+            if (searchText == null)
+            {
+                throw new ArgumentNullException(nameof(searchText));
+            }
+
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
+
+            // Using CurrentCulture since this is user facing
+            searchText = searchText.ToLower(CultureInfo.CurrentCulture);
+            text = text.ToLower(CultureInfo.CurrentCulture);
+
+            var idx = text.IndexOf(searchText, StringComparison.OrdinalIgnoreCase);
+            return idx != -1 ? new List<int> { idx } : new List<int> { };
+        }
+
         /// <summary>
         /// Gets all the possible matches to the search string with in the text
         /// </summary>

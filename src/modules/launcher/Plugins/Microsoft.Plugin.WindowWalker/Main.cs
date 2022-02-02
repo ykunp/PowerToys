@@ -50,7 +50,7 @@ namespace Microsoft.Plugin.WindowWalker
 
                 // For debugging you can remove the comment sign in the next line.
                 // ToolTipData = new ToolTipData(x.Result.Title, $"hWnd: {x.Result.Hwnd}\nWindow class: {x.Result.ClassName}\nProcess ID: {x.Result.ProcessInfo.ProcessID}\nThread ID: {x.Result.ProcessInfo.ThreadID}\nProcess: {x.Result.ProcessInfo.Name}\nProcess exists: {x.Result.ProcessInfo.DoesExist}\nIs full access denied: {x.Result.ProcessInfo.IsFullAccessDenied}\nIs uwp app: {x.Result.ProcessInfo.IsUwpApp}\nIs ShellProcess: {x.Result.ProcessInfo.IsShellProcess}\nIs window cloaked: {x.Result.IsCloaked}\nWindow cloak state: {x.Result.GetWindowCloakState()}"),
-                Score = x.Score + 10000,
+                Score = x.Score + 100000,
             }).ToList();
         }
 
